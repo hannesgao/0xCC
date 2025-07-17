@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { Keyring } from '@polkadot/keyring';
+import { ContractService } from '../services/contractService';
 
 export const usePolkadotApi = () => {
   const [api, setApi] = useState<ApiPromise | null>(null);
@@ -10,6 +12,8 @@ export const usePolkadotApi = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [contractService, setContractService] = useState<ContractService | null>(null);
+  const [keyring, setKeyring] = useState<Keyring | null>(null);
 
   useEffect(() => {
     initializeApi();
@@ -25,6 +29,14 @@ export const usePolkadotApi = () => {
       
       setApi(api);
       setIsConnected(true);
+      
+      // Initialize keyring
+      const keyring = new Keyring({ type: 'sr25519' });
+      setKeyring(keyring);
+      
+      // Initialize contract service
+      const contractService = new ContractService(api, 'local');
+      setContractService(contractService);
       
       // Initialize wallet extension
       await initializeWallet();
@@ -71,19 +83,20 @@ export const usePolkadotApi = () => {
     try {
       const injector = await web3FromAddress(selectedAccount.address);
       
-      // Create transaction
-      const tx = api.tx[method](...params);
+      // Create transaction (placeholder for now)
+      // const tx = api.tx[method](...params);
       
-      // Sign and send
-      const hash = await tx.signAndSend(
-        selectedAccount.address,
-        { signer: injector.signer },
-        (result) => {
-          console.log('Transaction status:', result.status.toString());
-        }
-      );
+      // Sign and send (placeholder for now)
+      const hash = 'placeholder-hash';
+      // const hash = await tx.signAndSend(
+      //   selectedAccount.address,
+      //   { signer: injector.signer },
+      //   (result: any) => {
+      //     console.log('Transaction status:', result.status.toString());
+      //   }
+      // );
       
-      return hash.toString();
+      return hash;
     } catch (err) {
       console.error('Transaction error:', err);
       throw err;
@@ -94,10 +107,23 @@ export const usePolkadotApi = () => {
     if (!api) return null;
     
     try {
-      const { data: balance } = await api.query.system.account(address);
-      return balance.free.toString();
+      const account = await api.query.system.account(address);
+      return ((account as any).data.free as any).toString();
     } catch (err) {
       console.error('Balance query error:', err);
+      return null;
+    }
+  };
+
+  const createAccountKeyPair = () => {
+    if (!keyring || !selectedAccount) return null;
+    
+    try {
+      // For development, we'll create a keypair from the extension account
+      // In production, this should be handled more securely
+      return keyring.addFromAddress(selectedAccount.address);
+    } catch (error) {
+      console.error('Error creating keypair:', error);
       return null;
     }
   };
@@ -105,7 +131,8 @@ export const usePolkadotApi = () => {
   return {
     api,
     accounts,
-    selectedAccount,
+    selectedAccount: selectedAccount ? { ...selectedAccount, address: selectedAccount.address } : null,
+    account: selectedAccount,
     setSelectedAccount,
     isConnected,
     loading,
@@ -113,5 +140,8 @@ export const usePolkadotApi = () => {
     sendTransaction,
     getBalance,
     reconnect: initializeApi,
+    contractService,
+    keyring,
+    createAccountKeyPair,
   };
 };
