@@ -1,0 +1,27 @@
+{
+  "name": "0xcc-zk-circuits",
+  "version": "1.0.0",
+  "description": "Zero-knowledge circuits for 0xCC payment privacy",
+  "main": "index.js",
+  "scripts": {
+    "setup": "npm install && npm run download-powers",
+    "download-powers": "curl -o powers_of_tau.ptau https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_15.ptau",
+    "compile": "circom payment_privacy.circom --r1cs --wasm --sym",
+    "setup-keys": "snarkjs groth16 setup payment_privacy.r1cs powers_of_tau.ptau payment_privacy_0000.zkey",
+    "contribute": "snarkjs zkey contribute payment_privacy_0000.zkey payment_privacy.zkey --name='First contribution'",
+    "export-vkey": "snarkjs zkey export verificationkey payment_privacy.zkey verification_key.json",
+    "generate-proof": "node scripts/generate_proof.js",
+    "verify-proof": "node scripts/verify_proof.js",
+    "test": "node scripts/test_circuits.js"
+  },
+  "dependencies": {
+    "circomlib": "^2.0.5",
+    "snarkjs": "^0.7.4"
+  },
+  "devDependencies": {
+    "circom_tester": "^0.0.19"
+  },
+  "keywords": ["zk", "circom", "privacy", "payments", "polkadot"],
+  "author": "0xCC Team",
+  "license": "MIT"
+}
