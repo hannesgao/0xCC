@@ -3,7 +3,7 @@ Cross-Chain P2P Payment &amp; Bill Splitting with ZK Privacy
 
 ---
 
-# Blockspace Synergy Hackathon - Project Development Plan / 项目开发计划
+# 0xCC - Project Development Plan / 项目开发计划
 
 ## Language Selection / 语言选择
 - [🇺🇸 English Version](#english-version)
