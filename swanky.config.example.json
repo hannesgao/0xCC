@@ -1,0 +1,75 @@
+{
+  "node": {
+    "port": 9944,
+    "binary": "substrate-contracts-node",
+    "workspaceRoot": "./"
+  },
+  "networks": {
+    "local": {
+      "url": "ws://127.0.0.1:9944"
+    },
+    "rococo": {
+      "url": "wss://rococo-contracts-rpc.polkadot.io"
+    },
+    "westend": {
+      "url": "wss://westend-rpc.polkadot.io"
+    },
+    "shibuya": {
+      "url": "wss://rpc.shibuya.astar.network"
+    },
+    "shiden": {
+      "url": "wss://rpc.shiden.astar.network"
+    },
+    "astar": {
+      "url": "wss://rpc.astar.network"
+    }
+  },
+  "contracts": {
+    "bill_splitting": {
+      "name": "bill_splitting",
+      "moduleName": "bill_splitting",
+      "deployments": {
+        "local": {
+          "address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+          "deploymentBlock": 1
+        },
+        "rococo": {
+          "address": "",
+          "deploymentBlock": 0
+        }
+      }
+    },
+    "xcm_handler": {
+      "name": "xcm_handler", 
+      "moduleName": "xcm_handler",
+      "deployments": {
+        "local": {
+          "address": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+          "deploymentBlock": 1
+        },
+        "rococo": {
+          "address": "",
+          "deploymentBlock": 0
+        }
+      }
+    }
+  },
+  "accounts": {
+    "alice": {
+      "mnemonic": "//Alice",
+      "isDev": true
+    },
+    "bob": {
+      "mnemonic": "//Bob", 
+      "isDev": true
+    },
+    "charlie": {
+      "mnemonic": "//Charlie",
+      "isDev": true
+    }
+  },
+  "mocha": {
+    "timeout": 60000
+  },
+  "defaultAccount": "alice"
+}

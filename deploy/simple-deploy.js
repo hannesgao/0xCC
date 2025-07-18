@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * 简化的安全部署脚本
- * 仅使用环境变量，避免交互式输入的复杂性
+ * Simplified secure deployment script
+ * Uses only environment variables, avoiding interactive input complexity
  */
 
 const { ApiPromise, WsProvider, Keyring } = require('@polkadot/api');
@@ -10,7 +10,7 @@ const { CodePromise } = require('@polkadot/api-contract');
 const fs = require('fs');
 const path = require('path');
 
-// 颜色输出
+// Color output
 const colors = {
     reset: '\x1b[0m',
     red: '\x1b[31m',
@@ -30,7 +30,7 @@ class SimpleDeployer {
         this.api = null;
         this.deployer = null;
         
-        // 网络配置
+        // Network configuration
         this.networks = {
             rococo: {
                 name: 'Rococo Testnet',
@@ -51,39 +51,39 @@ class SimpleDeployer {
     }
 
     async getDeployerFromEnv() {
-        log('blue', '🔑 从环境变量加载部署账户...');
+        log('blue', '🔑 Loading deployment account from environment variables...');
         
         const mnemonic = process.env.DEPLOYER_MNEMONIC;
         const privateKey = process.env.DEPLOYER_PRIVATE_KEY;
         
         if (!mnemonic && !privateKey) {
-            log('red', '❌ 未找到部署账户信息');
-            log('yellow', '请设置以下环境变量之一:');
+            log('red', '❌ Deployment account information not found');
+            log('yellow', 'Please set one of the following environment variables:');
             log('cyan', 'export DEPLOYER_MNEMONIC="your twelve word mnemonic"');
             log('cyan', 'export DEPLOYER_PRIVATE_KEY="0x..."');
-            log('yellow', '\n对于测试网，你也可以使用:');
-            log('cyan', 'export DEPLOYER_MNEMONIC="//Alice"  # 仅测试网');
-            throw new Error('缺少部署账户环境变量');
+            log('yellow', '\nFor testnets, you can also use:');
+            log('cyan', 'export DEPLOYER_MNEMONIC="//Alice"  # Testnet only');
+            throw new Error('Missing deployment account environment variable');
         }
 
         const keyring = new Keyring({ type: 'sr25519' });
         
         if (mnemonic) {
             if (mnemonic.startsWith('//')) {
-                // 测试账户
+                // Test account
                 if (this.network !== 'local' && this.network !== 'rococo' && this.network !== 'westend') {
-                    throw new Error('测试账户只能用于测试网');
+                    throw new Error('Test accounts can only be used on testnets');
                 }
-                log('yellow', `⚠️  使用测试账户: ${mnemonic}`);
+                log('yellow', `⚠️  Using test account: ${mnemonic}`);
                 return keyring.addFromUri(mnemonic);
             } else {
-                // 真实助记词
-                log('green', '✅ 使用助记词创建账户');
+                // Real mnemonic
+                log('green', '✅ Creating account using mnemonic');
                 return keyring.addFromMnemonic(mnemonic);
             }
         } else {
-            // 私钥
-            log('green', '✅ 使用私钥创建账户');
+            // Private key
+            log('green', '✅ Creating account using private key');
             return keyring.addFromUri(privateKey);
         }
     }
@@ -91,23 +91,23 @@ class SimpleDeployer {
     async connect() {
         const networkConfig = this.networks[this.network];
         if (!networkConfig) {
-            throw new Error(`不支持的网络: ${this.network}`);
+            throw new Error(`Unsupported network: ${this.network}`);
         }
 
-        log('cyan', `🔌 连接到 ${networkConfig.name}...`);
+        log('cyan', `🔌 Connecting to ${networkConfig.name}...`);
         log('blue', `RPC: ${networkConfig.rpc}`);
 
         const provider = new WsProvider(networkConfig.rpc);
         this.api = await ApiPromise.create({ provider });
         
         const chain = await this.api.rpc.system.chain();
-        log('green', `✅ 连接成功: ${chain}`);
+        log('green', `✅ Connected successfully: ${chain}`);
 
-        // 加载部署账户
+        // Load deployment account
         this.deployer = await this.getDeployerFromEnv();
-        log('blue', `📍 部署账户: ${this.deployer.address}`);
+        log('blue', `📍 Deployment account: ${this.deployer.address}`);
 
-        // 检查余额
+        // Check balance
         await this.checkBalance(networkConfig.token);
     }
 
@@ -116,47 +116,47 @@ class SimpleDeployer {
         const free = balance.free.toString();
         const freeBalance = Number(free) / 1e12;
         
-        log('yellow', `💰 账户余额: ${freeBalance.toFixed(4)} ${token}`);
+        log('yellow', `💰 Account balance: ${freeBalance.toFixed(4)} ${token}`);
         
         if (freeBalance < 1) {
-            log('red', '❌ 余额不足！需要至少 1 个token用于部署');
-            log('yellow', '请从水龙头获取测试代币:');
+            log('red', '❌ Insufficient balance! At least 1 token required for deployment');
+            log('yellow', 'Please get test tokens from the faucet:');
             log('cyan', 'https://paritytech.github.io/polkadot-testnet-faucet/');
-            throw new Error('余额不足');
+            throw new Error('Insufficient balance');
         }
     }
 
     async deployContract(contractName, contractFile, metadataFile) {
-        log('cyan', `\n📦 部署合约: ${contractName}`);
+        log('cyan', `\n📦 Deploying contract: ${contractName}`);
         
-        // 检查文件是否存在
+        // Check if files exist
         if (!fs.existsSync(contractFile)) {
-            throw new Error(`合约文件不存在: ${contractFile}`);
+            throw new Error(`Contract file not found: ${contractFile}`);
         }
         if (!fs.existsSync(metadataFile)) {
-            throw new Error(`元数据文件不存在: ${metadataFile}`);
+            throw new Error(`Metadata file not found: ${metadataFile}`);
         }
 
-        // 读取合约文件
+        // Read contract files
         const wasm = fs.readFileSync(contractFile);
         const metadata = JSON.parse(fs.readFileSync(metadataFile, 'utf8'));
         
-        log('blue', `📄 合约大小: ${(wasm.length / 1024).toFixed(2)} KB`);
+        log('blue', `📄 Contract size: ${(wasm.length / 1024).toFixed(2)} KB`);
 
-        // 创建代码承诺
+        // Create code promise
         const code = new CodePromise(this.api, metadata, wasm);
         
-        // 设置gas限制
+        // Set gas limit
         const gasLimit = this.api.registry.createType('WeightV2', {
             refTime: '5000000000000',
             proofSize: '2500000'
         });
 
-        log('yellow', '⛽ 估算部署费用...');
+        log('yellow', '⛽ Estimating deployment cost...');
 
         try {
-            // 部署合约
-            log('blue', '🚀 提交部署交易...');
+            // Deploy contract
+            log('blue', '🚀 Submitting deployment transaction...');
             
             const endowment = 0;
             const storageDepositLimit = null;
@@ -169,16 +169,16 @@ class SimpleDeployer {
                 })
                 .signAndSend(this.deployer, (result) => {
                     if (result.status.isInBlock) {
-                        log('green', `✅ 交易已打包: ${result.status.asInBlock}`);
+                        log('green', `✅ Transaction included in block: ${result.status.asInBlock}`);
                     } else if (result.status.isFinalized) {
-                        log('green', `🎉 交易已确认: ${result.status.asFinalized}`);
+                        log('green', `🎉 Transaction finalized: ${result.status.asFinalized}`);
                         
-                        // 提取合约地址
+                        // Extract contract address
                         let contractAddress = null;
                         result.events.forEach(({ event }) => {
                             if (event.section === 'contracts' && event.method === 'Instantiated') {
                                 contractAddress = event.data[1].toString();
-                                log('green', `📍 合约地址: ${contractAddress}`);
+                                log('green', `📍 Contract address: ${contractAddress}`);
                             }
                         });
                         
@@ -188,20 +188,20 @@ class SimpleDeployer {
                             blockHash: result.status.asFinalized.toString()
                         });
                     } else if (result.isError) {
-                        log('red', '❌ 交易失败');
+                        log('red', '❌ Transaction failed');
                         unsub();
-                        reject(new Error('部署交易失败'));
+                        reject(new Error('Deployment transaction failed'));
                     }
                 });
             });
 
         } catch (error) {
-            throw new Error(`部署失败: ${error.message}`);
+            throw new Error(`Deployment failed: ${error.message}`);
         }
     }
 
     async deployAll() {
-        log('cyan', '🚀 开始 0xCC 合约部署');
+        log('cyan', '🚀 Starting 0xCC contracts deployment');
         log('cyan', '=====================================\n');
 
         try {
@@ -209,8 +209,8 @@ class SimpleDeployer {
 
             const deployments = {};
 
-            // 部署账单分割合约
-            log('yellow', '\n1️⃣ 部署账单分割合约...');
+            // Deploy Bill Splitting contract
+            log('yellow', '\n1️⃣ Deploying Bill Splitting contract...');
             const billSplittingResult = await this.deployContract(
                 'Bill Splitting',
                 path.join(__dirname, '../contracts/bill_splitting/target/ink/bill_splitting.contract'),
@@ -218,11 +218,11 @@ class SimpleDeployer {
             );
             deployments.billSplitting = billSplittingResult;
 
-            // 等待几秒
+            // Wait a few seconds
             await new Promise(resolve => setTimeout(resolve, 3000));
 
-            // 部署XCM处理合约
-            log('yellow', '\n2️⃣ 部署XCM处理合约...');
+            // Deploy XCM Handler contract
+            log('yellow', '\n2️⃣ Deploying XCM Handler contract...');
             const xcmHandlerResult = await this.deployContract(
                 'XCM Handler',
                 path.join(__dirname, '../contracts/xcm_handler/target/ink/xcm_handler.contract'),
@@ -230,19 +230,19 @@ class SimpleDeployer {
             );
             deployments.xcmHandler = xcmHandlerResult;
 
-            // 保存部署信息
+            // Save deployment info
             this.saveDeploymentInfo(deployments);
             
-            log('green', '\n🎉 所有合约部署成功！');
+            log('green', '\n🎉 All contracts deployed successfully!');
             this.printSummary(deployments);
 
         } catch (error) {
-            log('red', `\n❌ 部署失败: ${error.message}`);
+            log('red', `\n❌ Deployment failed: ${error.message}`);
             throw error;
         } finally {
             if (this.api) {
                 await this.api.disconnect();
-                log('blue', '\n👋 已断开连接');
+                log('blue', '\n👋 Disconnected');
             }
         }
     }
@@ -257,49 +257,49 @@ class SimpleDeployer {
 
         const filename = `deployment-${this.network}-${Date.now()}.json`;
         fs.writeFileSync(filename, JSON.stringify(deploymentInfo, null, 2));
-        log('blue', `💾 部署信息已保存: ${filename}`);
+        log('blue', `💾 Deployment info saved: ${filename}`);
     }
 
     printSummary(deployments) {
-        log('cyan', '\n📋 部署摘要');
+        log('cyan', '\n📋 Deployment Summary');
         log('cyan', '=================');
-        log('blue', `网络: ${this.networks[this.network].name}`);
-        log('blue', `部署者: ${this.deployer.address}`);
-        log('blue', `时间: ${new Date().toLocaleString()}`);
+        log('blue', `Network: ${this.networks[this.network].name}`);
+        log('blue', `Deployer: ${this.deployer.address}`);
+        log('blue', `Time: ${new Date().toLocaleString()}`);
         
-        log('green', '\n📍 合约地址:');
+        log('green', '\n📍 Contract addresses:');
         if (deployments.billSplitting) {
-            log('yellow', `账单分割: ${deployments.billSplitting.address}`);
+            log('yellow', `Bill Splitting: ${deployments.billSplitting.address}`);
         }
         if (deployments.xcmHandler) {
-            log('yellow', `XCM处理: ${deployments.xcmHandler.address}`);
+            log('yellow', `XCM Handler: ${deployments.xcmHandler.address}`);
         }
 
-        log('cyan', '\n📝 下一步:');
-        log('blue', '1. 更新前端配置中的合约地址');
-        log('blue', '2. 在区块浏览器中验证合约');
-        log('blue', '3. 测试合约功能');
+        log('cyan', '\n📝 Next steps:');
+        log('blue', '1. Update contract addresses in frontend config');
+        log('blue', '2. Verify contracts on block explorer');
+        log('blue', '3. Test contract functionality');
     }
 }
 
-// 使用说明
+// Usage instructions
 function showUsage() {
-    log('cyan', '\n📖 使用说明');
-    log('yellow', '设置环境变量:');
+    log('cyan', '\n📖 Usage Instructions');
+    log('yellow', 'Set environment variables:');
     log('blue', 'export DEPLOYER_MNEMONIC="your twelve word mnemonic phrase"');
-    log('gray', '# 或者');
+    log('gray', '# or');
     log('blue', 'export DEPLOYER_PRIVATE_KEY="0x..."');
     
-    log('yellow', '\n运行部署:');
-    log('blue', 'node simple-deploy.js rococo    # 部署到Rococo');
-    log('blue', 'node simple-deploy.js westend   # 部署到Westend');
-    log('blue', 'node simple-deploy.js local     # 部署到本地节点');
+    log('yellow', '\nRun deployment:');
+    log('blue', 'node simple-deploy.js rococo    # Deploy to Rococo');
+    log('blue', 'node simple-deploy.js westend   # Deploy to Westend');
+    log('blue', 'node simple-deploy.js local     # Deploy to local node');
 
-    log('yellow', '\n测试账户 (仅测试网):');
+    log('yellow', '\nTest accounts (testnet only):');
     log('blue', 'export DEPLOYER_MNEMONIC="//Alice"');
 }
 
-// 主函数
+// Main function
 async function main() {
     const args = process.argv.slice(2);
     
@@ -310,26 +310,26 @@ async function main() {
 
     const network = args[0] || 'rococo';
     
-    log('cyan', `\n🎯 目标网络: ${network}`);
+    log('cyan', `\n🎯 Target network: ${network}`);
     
     const deployer = new SimpleDeployer(network);
     await deployer.deployAll();
 }
 
-// 错误处理
+// Error handling
 process.on('unhandledRejection', (error) => {
-    log('red', `未处理的Promise错误: ${error.message}`);
+    log('red', `Unhandled Promise error: ${error.message}`);
     process.exit(1);
 });
 
 process.on('SIGINT', () => {
-    log('yellow', '\n\n⏹️  部署中断');
+    log('yellow', '\n\n⏹️  Deployment interrupted');
     process.exit(0);
 });
 
 if (require.main === module) {
     main().catch(error => {
-        log('red', `部署错误: ${error.message}`);
+        log('red', `Deployment error: ${error.message}`);
         process.exit(1);
     });
 }
