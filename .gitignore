@@ -121,11 +121,24 @@ circuits/proofs/
 tmp/
 temp/
 
-# Security
+# Security - 私钥和敏感信息
 private_keys/
 *.key
 *.pem
+*.keystore
 mnemonic.txt
+keyfile.json
+wallet.json
+deployment-*.json
+.secret
+.private
+account.json
+
+# Environment files with sensitive data
+.env.production
+.env.staging
+.env.testnet
+.env.mainnet
 
 # claude
 CLAUDE.md
