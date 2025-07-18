@@ -1,0 +1,100 @@
+{
+  "networks": {
+    "rococo": {
+      "name": "Rococo Testnet",
+      "rpc": "wss://rococo-contracts-rpc.polkadot.io",
+      "chainId": "rococo",
+      "nativeToken": "ROC",
+      "explorer": "https://rococo.subscan.io",
+      "faucet": "https://paritytech.github.io/polkadot-testnet-faucet/",
+      "contracts": {
+        "billSplitting": {
+          "address": null,
+          "blockNumber": null,
+          "transactionHash": null
+        },
+        "xcmHandler": {
+          "address": null,
+          "blockNumber": null,
+          "transactionHash": null
+        }
+      }
+    },
+    "westend": {
+      "name": "Westend Testnet",
+      "rpc": "wss://westend-rpc.polkadot.io",
+      "chainId": "westend",
+      "nativeToken": "WND",
+      "explorer": "https://westend.subscan.io",
+      "faucet": "https://paritytech.github.io/polkadot-testnet-faucet/",
+      "contracts": {
+        "billSplitting": {
+          "address": null,
+          "blockNumber": null,
+          "transactionHash": null
+        },
+        "xcmHandler": {
+          "address": null,
+          "blockNumber": null,
+          "transactionHash": null
+        }
+      }
+    },
+    "local": {
+      "name": "Local Development",
+      "rpc": "ws://127.0.0.1:9944",
+      "chainId": "local",
+      "nativeToken": "UNIT",
+      "explorer": null,
+      "faucet": null,
+      "contracts": {
+        "billSplitting": {
+          "address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+          "blockNumber": 1,
+          "transactionHash": "0x0000"
+        },
+        "xcmHandler": {
+          "address": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+          "blockNumber": 1,
+          "transactionHash": "0x0000"
+        }
+      }
+    }
+  },
+  "deploymentAccounts": {
+    "alice": {
+      "name": "Alice (Deployer)",
+      "address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+      "mnemonic": "//Alice"
+    },
+    "bob": {
+      "name": "Bob (Tester)",
+      "address": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+      "mnemonic": "//Bob"
+    }
+  },
+  "contractMetadata": {
+    "billSplitting": {
+      "name": "0xCC Bill Splitting",
+      "version": "1.0.0",
+      "source": "contracts/bill_splitting/target/ink/bill_splitting.contract",
+      "abi": "contracts/bill_splitting/target/ink/bill_splitting.json"
+    },
+    "xcmHandler": {
+      "name": "0xCC XCM Handler",
+      "version": "1.0.0",
+      "source": "contracts/xcm_handler/target/ink/xcm_handler.contract",
+      "abi": "contracts/xcm_handler/target/ink/xcm_handler.json"
+    }
+  },
+  "gasLimits": {
+    "deploy": {
+      "refTime": "5000000000000",
+      "proofSize": "2500000"
+    },
+    "call": {
+      "refTime": "1000000000000",
+      "proofSize": "1000000"
+    }
+  }
+}
