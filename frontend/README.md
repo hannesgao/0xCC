@@ -91,7 +91,7 @@ Before running the application, ensure you have:
      ```bash
      cp .env.example .env.local
      ```
-   - If `.env.example` is missing, you can create `.env.local` manually with the following content (adjust as needed):
+   - If `.env.example` is missing, create `.env.local` manually with the following content (adjust as needed):
      ```env
      VITE_NETWORK_ENV=testnet
      VITE_ROCOCO_RPC_URL=wss://rococo-contracts-rpc.polkadot.io
@@ -123,6 +123,38 @@ Before running the application, ensure you have:
    - Wallet not connecting: Make sure you have the Polkadot.js/Talisman/SubWallet browser extension installed and are on the correct network.
    - Blockchain API errors: Try with the default contract addresses, or contact backend developers for the latest addresses.
 
+## Project Structure
+
+```
+frontend/
+├── public/                 # Static assets
+├── src/
+│   ├── components/         # Reusable UI components
+│   │   ├── common/         # Generic components
+│   │   ├── wallet/         # Wallet-related components
+│   │   ├── payment/        # Payment components
+│   │   └── bill-splitting/ # Bill splitting components
+│   ├── pages/              # Page components
+│   ├── hooks/              # Custom React hooks
+│   ├── store/              # Redux store and slices
+│   ├── services/           # API services and blockchain interactions
+│   ├── utils/              # Utility functions
+│   ├── types/              # TypeScript type definitions
+│   └── styles/             # Global styles and Tailwind config
+├── tests/                  # Test files
+├── docs/                   # Documentation
+└── config/                 # Configuration files
+```
+
+### Debug Checklist
+
+- Ensure all required files and folders exist as shown above.
+- `src/config/` should contain `wallets.ts`, `networks.ts`, and `contracts.ts` as referenced in the README.
+- If you see missing module errors, check for typos in import paths and file names.
+- If Tailwind CSS is not working, ensure `tailwind.config.js` and `postcss.config.js` exist and are correctly set up.
+- If you use TypeScript, make sure `tsconfig.json` exists and is valid.
+- For Vite, ensure `vite.config.ts` or `vite.config.js` exists in the root of `frontend/`.
+
 ## Development
 
 ### Running the Development Server
@@ -142,29 +174,6 @@ The application will be available at `http://localhost:5173`
 - `npm run test:coverage` - Run tests with coverage
 - `npm run lint` - Run ESLint
 - `npm run type-check` - Run TypeScript checks
-
-### Project Structure
-
-```
-frontend/
-├── public/                 # Static assets
-├── src/
-│   ├── components/         # Reusable UI components
-│   │   ├── common/        # Generic components
-│   │   ├── wallet/        # Wallet-related components
-│   │   ├── payment/       # Payment components
-│   │   └── bill-splitting/ # Bill splitting components
-│   ├── pages/             # Page components
-│   ├── hooks/             # Custom React hooks
-│   ├── store/             # Redux store and slices
-│   ├── services/          # API services and blockchain interactions
-│   ├── utils/             # Utility functions
-│   ├── types/             # TypeScript type definitions
-│   └── styles/            # Global styles and Tailwind config
-├── tests/                 # Test files
-├── docs/                  # Documentation
-└── config/                # Configuration files
-```
 
 ## Deployment
 
