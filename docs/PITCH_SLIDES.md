@@ -133,7 +133,7 @@
 
 ### Join Us in Making Crypto Payments easier
 
-1. **Try our demo after 4 weeks** - 0xcc.app
+1. **Try our demo after 4 weeks** - 0xCC.app
 2. **Vote for us** - Main track + bounties
 3. **Partner with us** - Integrate 0xCC for seamless payments experence
 4. **Investments** - Raising seed round

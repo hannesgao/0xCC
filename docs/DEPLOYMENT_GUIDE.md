@@ -225,7 +225,7 @@ contract.events.BillCreated((event) => {
 - **Polkadot Discord**: #smart-contracts channel
 - **Substrate StackExchange**: https://substrate.stackexchange.com
 - **ink! Documentation**: https://use.ink
-- **Project Repository**: https://github.com/yourusername/0xCC
+- **Project Repository**: https://github.com/hannesgao/0xCC
 
 ## Deployment Log Template
 
