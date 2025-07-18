@@ -74,6 +74,55 @@ Before running the application, ensure you have:
    VITE_ANALYTICS_ID=your-analytics-id
    ```
 
+## Quick Local Start (Debug Guide)
+
+1. **Switch to the frontend directory**
+   ```bash
+   cd frontend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Prepare environment variables**
+   - If `.env.local` does not exist, copy the example:
+     ```bash
+     cp .env.example .env.local
+     ```
+   - If `.env.example` is missing, you can create `.env.local` manually with the following content (adjust as needed):
+     ```env
+     VITE_NETWORK_ENV=testnet
+     VITE_ROCOCO_RPC_URL=wss://rococo-contracts-rpc.polkadot.io
+     VITE_WESTEND_RPC_URL=wss://westend-rpc.polkadot.io
+     VITE_BILL_SPLITTING_CONTRACT=5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM
+     VITE_XCM_HANDLER_CONTRACT=5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty
+     VITE_APP_NAME=0xCC
+     VITE_APP_VERSION=1.0.0
+     VITE_ENABLE_ZK_PRIVACY=true
+     VITE_DEBUG=true
+     ```
+
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+   - By default, the app will be available at `http://localhost:5173`.
+
+5. **Debugging tips**
+   - If the port is already in use, specify another port: `npm run dev -- --port=3000`
+   - If you see errors about missing environment variables, check that `.env.local` exists and is complete.
+   - If you encounter dependency or Node.js version issues, use Node.js 18.x and reinstall dependencies:
+     ```bash
+     rm -rf node_modules
+     npm install
+     ```
+
+6. **Common troubleshooting**
+   - Wallet not connecting: Make sure you have the Polkadot.js/Talisman/SubWallet browser extension installed and are on the correct network.
+   - Blockchain API errors: Try with the default contract addresses, or contact backend developers for the latest addresses.
+
 ## Development
 
 ### Running the Development Server
